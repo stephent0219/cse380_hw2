@@ -11,6 +11,7 @@ import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 export default class BubbleBehavior implements AI {
     // The GameNode that owns this behavior
     private owner: Graphic;
+    
 
     // The current horizontal and vertical speed of the bubble
     private currentXSpeed: number;
