@@ -504,6 +504,7 @@ export default class HW2Scene extends Scene {
 			this.mineSpawnTimer.start(100);
 
 		}
+		console.log("mine");
 	}
     /**
 	 * This method handles spawning a bubble from the object-pool of bubbles
@@ -537,7 +538,29 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS
 	 */
 	protected spawnBubble(): void {
-		// TODO spawn bubbles!
+		// Find the first visible mine
+		let bubble: Graphic = this.bubbles.find((bubble: Graphic) => { return !bubble.visible });
+
+		if (bubble){
+			// Bring this mine to life
+			bubble.visible = true;
+
+			// Extract the size of the viewport
+			let paddedViewportSize = this.viewport.getHalfSize().scaled(2).add(this.worldPadding);
+			let viewportSize = this.viewport.getHalfSize().scaled(2);
+
+			// Loop on position until we're clear of the player
+			bubble.position.copy(RandUtils.randVec(viewportSize.x, paddedViewportSize.x, paddedViewportSize.y - viewportSize.y, viewportSize.y));
+			while(bubble.position.distanceTo(this.player.position) < 100){
+				bubble.position.copy(RandUtils.randVec(paddedViewportSize.x, paddedViewportSize.x, paddedViewportSize.y - viewportSize.y, viewportSize.y));
+			}
+
+			bubble.setAIActive(true, {});
+			// Start the mine spawn timer - spawn a mine every half a second I think
+			this.bubbleSpawnTimer.start(100);
+
+		}
+		console.log("bubble");
 	}
 	/**
 	 * This function takes in a GameNode that may be out of bounds of the viewport and
