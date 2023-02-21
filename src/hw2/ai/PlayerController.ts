@@ -59,8 +59,8 @@ export default class PlayerController implements AI {
 		this.emitter = new Emitter();
 
 		this.laserTimer = new Timer(2500, this.handleLaserTimerEnd, false);
-		
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
+		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
 
 		this.activate(options);
 	}
@@ -155,6 +155,10 @@ export default class PlayerController implements AI {
 				this.handleShootLaserEvent(event);
 				break;
 			}
+			case HW2Events.PLAYER_MINE_COLLISION: {
+				this.handlePlayerMineCollisionEvent(event);
+				break;
+			}
 			default: {
 				throw new Error(`Unhandled event of type: ${event.type} caught in PlayerController`);
 			}
@@ -192,6 +196,11 @@ export default class PlayerController implements AI {
 		}
 	}
 
+	protected handlePlayerMineCollisionEvent(event: GameEvent): void {
+		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT, false, HW2Events.PLAYER_MINE_COLLISION);
+		this.currentHealth = this.currentHealth-0.33;
+		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
+	}
 } 
 
 

@@ -9,6 +9,9 @@ export const HW2Events = {
      */
 	PLAYER_MINE_COLLISION: "PLAYER_MINE_COLLISION", 
 
+
+    PLAYER_HEALTH_CHANGE: "PLAYER_HEALTH_CHANGE",
+
     /**
      * The event that gets emitted when the charge of the player's laser beam changes
      * 
