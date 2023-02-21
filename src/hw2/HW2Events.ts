@@ -12,6 +12,10 @@ export const HW2Events = {
 
     PLAYER_HEALTH_CHANGE: "PLAYER_HEALTH_CHANGE",
 
+    PLAYER_AIR_CHANGE: "PLAYER_AIR_CHANGE",
+
+    PLAYER_BUBBLE_COLLISION: "PLAYER_BUBBLE_COLLISION",
+
     /**
      * The event that gets emitted when the charge of the player's laser beam changes
      * 

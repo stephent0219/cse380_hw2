@@ -167,6 +167,7 @@ export default class HW2Scene extends Scene {
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.DEAD);
 		this.receiver.subscribe(HW2Events.PLAYER_HEALTH_CHANGE);
+		this.receiver.subscribe(HW2Events.PLAYER_AIR_CHANGE);
 
 		// Subscribe to laser events
 		this.receiver.subscribe(HW2Events.FIRING_LASER);
@@ -237,6 +238,10 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.PLAYER_HEALTH_CHANGE: {
 				this.handleHealthChange(event.data.get("currentHealth"), event.data.get("maxHealth"));
+				break;
+			}
+			case HW2Events.PLAYER_AIR_CHANGE: {
+				this.handleAirChange(event.data.get("currentAir"), event.data.get("maxAir"));
 				break;
 			}
 			default: {
@@ -763,8 +768,14 @@ export default class HW2Scene extends Scene {
 	 * an AABB and a Circle
 	 */
 	public handleBubblePlayerCollisions(): number {
-		// TODO check for collisions between the player and the bubbles
-        return;
+		let collisions = 0;
+		for (let bubble of this.bubbles) {
+			if (bubble.visible && this.checkAABBtoCircleCollision(this.player.collisionShape.getBoundingRect(), bubble.collisionShape.getBoundingCircle())) {
+				this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
+				collisions += 1;
+			}
+		}	
+		return collisions;
 	}
 
 	/**
@@ -837,8 +848,7 @@ export default class HW2Scene extends Scene {
 	 * @see MathUtils for more information about MathUtil functions
 	 */
 	public static checkAABBtoCircleCollision(aabb: AABB, circle: Circle): boolean {
-        // TODO implement collision detection for AABBs and Circles
-        return;
+        return aabb.overlaps(circle.getBoundingRect());
 	}
 
     /** Methods for locking and wrapping nodes */

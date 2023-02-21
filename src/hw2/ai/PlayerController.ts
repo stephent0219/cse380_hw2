@@ -64,6 +64,7 @@ export default class PlayerController implements AI {
 		this.playerGetHitTimer = new Timer(1000, this.handlePlayerGetHitTimerEnd, false);
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
+		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
 
 		this.activate(options);
 	}
@@ -141,6 +142,8 @@ export default class PlayerController implements AI {
 		// Player looses a little bit of air each frame
 		this.currentAir = MathUtils.clamp(this.currentAir - deltaT, this.minAir, this.maxAir);
 
+		this.emitter.fireEvent(HW2Events.PLAYER_AIR_CHANGE, {currentAir: this.currentAir, maxAir: this.maxAir});
+
 		// If the player is out of air - start subtracting from the player's health
 		this.currentHealth = this.currentAir <= this.minAir ? MathUtils.clamp(this.currentHealth - deltaT*2, this.minHealth, this.maxHealth) : this.currentHealth;
 	}
@@ -160,6 +163,10 @@ export default class PlayerController implements AI {
 			}
 			case HW2Events.PLAYER_MINE_COLLISION: {
 				this.handlePlayerMineCollisionEvent(event);
+				break;
+			}
+			case HW2Events.PLAYER_BUBBLE_COLLISION: {
+				this.handlePlayerBubbleCollisionEvent(event);
 				break;
 			}
 			default: {
@@ -204,6 +211,11 @@ export default class PlayerController implements AI {
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT, false, HW2Events.PLAYER_MINE_COLLISION);
 		this.currentHealth = this.currentHealth-0.3;
 		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
+	}
+
+	protected handlePlayerBubbleCollisionEvent(event: GameEvent): void {
+		this.currentAir += 1;
+		this.emitter.fireEvent(HW2Events.PLAYER_AIR_CHANGE, {currentAir: this.currentAir, maxAir: this.maxAir});
 	}
 
 	protected handlePlayerGetHitTimerEnd = () => {
