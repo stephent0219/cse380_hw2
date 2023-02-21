@@ -42,6 +42,8 @@ export default class PlayerController implements AI {
 	/** A timer for charging the player's laser cannon thing */
 	private laserTimer: Timer;
 
+	private playerGetHitTimer: Timer;
+
 	// A receiver and emitter to hook into the event queue
 	private receiver: Receiver;
 	private emitter: Emitter;
@@ -59,6 +61,7 @@ export default class PlayerController implements AI {
 		this.emitter = new Emitter();
 
 		this.laserTimer = new Timer(2500, this.handleLaserTimerEnd, false);
+		this.playerGetHitTimer = new Timer(1000, this.handlePlayerGetHitTimerEnd, false);
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
 
@@ -197,9 +200,15 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerMineCollisionEvent(event: GameEvent): void {
+		this.playerGetHitTimer.start();
 		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT, false, HW2Events.PLAYER_MINE_COLLISION);
-		this.currentHealth = this.currentHealth-0.33;
+		this.currentHealth = this.currentHealth-0.3;
 		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
+	}
+
+	protected handlePlayerGetHitTimerEnd = () => {
+		this.owner.animation.play(PlayerAnimations.IDLE);
+		this.playerGetHitTimer.reset();
 	}
 } 
 
