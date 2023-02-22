@@ -121,6 +121,7 @@ export default class PlayerController implements AI {
         // If the player is out of hp - play the death animation
 		if (this.currentHealth <= this.minHealth) { 
             this.emitter.fireEvent(HW2Events.DEAD);
+			this.owner.animation.play(PlayerAnimations.DEATH);
             return;
         }
 
@@ -146,6 +147,8 @@ export default class PlayerController implements AI {
 
 		// If the player is out of air - start subtracting from the player's health
 		this.currentHealth = this.currentAir <= this.minAir ? MathUtils.clamp(this.currentHealth - deltaT*2, this.minHealth, this.maxHealth) : this.currentHealth;
+		
+		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
 	/**
 	 * This method handles all events that the reciever for the PlayerController is
@@ -208,7 +211,7 @@ export default class PlayerController implements AI {
 
 	protected handlePlayerMineCollisionEvent(event: GameEvent): void {
 		this.playerGetHitTimer.start();
-		this.owner.animation.playIfNotAlready(PlayerAnimations.HIT, false, HW2Events.PLAYER_MINE_COLLISION);
+		this.owner.animation.play(PlayerAnimations.HIT);
 		this.currentHealth = this.currentHealth-0.3;
 		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
