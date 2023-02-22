@@ -617,9 +617,7 @@ export default class HW2Scene extends Scene {
 	 * It may be helpful to make your own drawings while figuring out the math for this part.
 	 */
 	public handleScreenDespawn(node: CanvasNode): void {
-        console.log(node._position.vec[0]);
-		console.log(node._position.vec[1]);
-		if(node._position.vec[0] < -64 || node._position.vec[0] > (2560+64) || node._position.vec[1] < -64 || node._position.vec[1] > (1280+64)){
+		if(node.position.x < -64 || node.position.x > (2560+64) || node.position.y < -64 || node.position.y > (1280+64)){
 			node.visible = false;
 		}
 	}
@@ -903,13 +901,11 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS													
 	 */
 	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-
-		if(player.position.vec[1] < 0){
-			player.position.set(player.position.vec[0], 900);
-		}else if(player.position.vec[1] > 900){
-			player.position.set(player.position.vec[0], 0);
+		if(player.position.y < 0){
+			player.position.set(player.position.x, 900);
+		}else if(player.position.y > 900){
+			player.position.set(player.position.x, 0);
 		}
-		
 	}
 
     /**
@@ -952,10 +948,10 @@ export default class HW2Scene extends Scene {
 	 * 
 	 */
 	protected lockPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		if(player.position.vec[0] < 50){
-			player.position.set(50, player.position.vec[1]);
-		}else if(player.position.vec[0] > 850){
-			player.position.set(850, player.position.vec[1]);
+		if(player.position.x < 50){
+			player.position.set(50, player.position.y);
+		}else if(player.position.x > 850){
+			player.position.set(850, player.position.y);
 		}
 	}
 
