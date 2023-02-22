@@ -192,6 +192,7 @@ export default class HW2Scene extends Scene {
 		// Handle timers
 		this.handleTimers();
 
+		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
         // TODO Remove despawning of mines and bubbles here
 
 		// Handle screen despawning of mines and bubbles
@@ -515,7 +516,6 @@ export default class HW2Scene extends Scene {
 			this.mineSpawnTimer.start(100);
 
 		}
-		console.log("mine");
 	}
     /**
 	 * This method handles spawning a bubble from the object-pool of bubbles
@@ -571,7 +571,6 @@ export default class HW2Scene extends Scene {
 			this.bubbleSpawnTimer.start(100);
 
 		}
-		console.log("bubble");
 	}
 	/**
 	 * This function takes in a GameNode that may be out of bounds of the viewport and
@@ -903,7 +902,13 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS													
 	 */
 	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO wrap the player around the top/bottom of the screen
+		
+		if(player.position.vec[1] < 0){
+			player.position.set(player.position.vec[0], 900);
+		}else if(player.position.vec[1] > 900){
+			player.position.set(player.position.vec[0], 0);
+		}
+		
 	}
 
     /**
