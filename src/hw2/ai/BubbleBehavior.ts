@@ -3,6 +3,8 @@ import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Graphic from "../../Wolfie2D/Nodes/Graphic";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
+import Receiver from "../../Wolfie2D/Events/Receiver";
+import { HW2Events } from "../HW2Events";
 
 /**
  * A class that represents the behavior of the bubbles in the HW2Scene
@@ -29,8 +31,12 @@ export default class BubbleBehavior implements AI {
     private minYSpeed: number;
     private maxYSpeed: number;
 
+    private receiver: Receiver;
+
     public initializeAI(owner: Graphic, options: Record<string, any>): void {
         this.owner = owner;
+
+        this.receiver = new Receiver();
 
         this.currentXSpeed = 50;
         this.xSpeedIncrement = 0;
@@ -41,6 +47,8 @@ export default class BubbleBehavior implements AI {
         this.ySpeedIncrement = 0;
         this.minYSpeed = 50;
         this.maxYSpeed = 50;
+
+        this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
 
         this.activate(options);
     }
@@ -53,6 +61,10 @@ export default class BubbleBehavior implements AI {
 
     public handleEvent(event: GameEvent): void {
         switch(event.type) {
+            case HW2Events.PLAYER_BUBBLE_COLLISION: {
+                this.handlePlayerBubbleCollision(event);
+                break;
+            }
             default: {
                 throw new Error("Unhandled event caught in BubbleBehavior! Event type: " + event.type);
             }
@@ -71,6 +83,18 @@ export default class BubbleBehavior implements AI {
 
             // Update position of the bubble - I'm scaling the Vec2.UP and Vec2.LEFT vectors to move the bubble up and to the left
             this.owner.position.add(Vec2.UP.scale(this.currentYSpeed * deltaT)).add(Vec2.LEFT.scale(this.currentXSpeed* deltaT));
+
+            while (this.receiver.hasNextEvent()) {
+                this.handleEvent(this.receiver.getNextEvent());
+            }
+        }
+    }
+
+    protected handlePlayerBubbleCollision(event: GameEvent): void {
+        let id = event.data.get("id");
+        if (id === this.owner.id) {
+            console.log("id");
+            this.owner.visible = false;
         }
     }
     
