@@ -193,6 +193,7 @@ export default class HW2Scene extends Scene {
 		this.handleTimers();
 
 		this.wrapPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
+		this.lockPlayer(this.player, this.viewport.getCenter(), this.viewport.getHalfSize());
         // TODO Remove despawning of mines and bubbles here
 
 		// Handle screen despawning of mines and bubbles
@@ -902,7 +903,7 @@ export default class HW2Scene extends Scene {
 	 * 							X THIS IS OUT OF BOUNDS													
 	 */
 	protected wrapPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		
+
 		if(player.position.vec[1] < 0){
 			player.position.set(player.position.vec[0], 900);
 		}else if(player.position.vec[1] > 900){
@@ -951,7 +952,11 @@ export default class HW2Scene extends Scene {
 	 * 
 	 */
 	protected lockPlayer(player: CanvasNode, viewportCenter: Vec2, viewportHalfSize: Vec2): void {
-		// TODO prevent the player from moving off the left/right side of the screen
+		if(player.position.vec[0] < 50){
+			player.position.set(50, player.position.vec[1]);
+		}else if(player.position.vec[0] > 850){
+			player.position.set(850, player.position.vec[1]);
+		}
 	}
 
 	public handleTimers(): void {
