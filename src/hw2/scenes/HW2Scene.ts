@@ -188,7 +188,7 @@ export default class HW2Scene extends Scene {
 		// Handles mine and bubble collisions
 		this.handleMinePlayerCollisions();
 		this.bubblesPopped += this.handleBubblePlayerCollisions();
-
+	
 		// Handle timers
 		this.handleTimers();
 
@@ -226,6 +226,7 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.DEAD: {
 				this.gameOverTimer.start();
+				this.gameOverTimer.end();
 				break;
 			}
 			case HW2Events.CHARGE_CHANGE: {
@@ -616,7 +617,11 @@ export default class HW2Scene extends Scene {
 	 * It may be helpful to make your own drawings while figuring out the math for this part.
 	 */
 	public handleScreenDespawn(node: CanvasNode): void {
-        // TODO - despawn the game nodes when they move out of the padded viewport
+        console.log(node._position.vec[0]);
+		console.log(node._position.vec[1]);
+		if(node._position.vec[0] < -64 || node._position.vec[0] > (2560+64) || node._position.vec[1] < -64 || node._position.vec[1] > (1280+64)){
+			node.visible = false;
+		}
 	}
 
 	/** Methods for updating the UI */
