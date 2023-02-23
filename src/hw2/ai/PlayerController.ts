@@ -48,6 +48,9 @@ export default class PlayerController implements AI {
 	private receiver: Receiver;
 	private emitter: Emitter;
 
+	private checkDead: boolean;
+	private playerHitting: boolean;
+
 	/**
 	 * This method initializes all variables inside of this AI class.
      * 
@@ -90,6 +93,10 @@ export default class PlayerController implements AI {
         // Set the player's movement speed
         this.currentSpeed = 300
 
+		this.checkDead = false;
+
+		this.playerHitting = false;
+
         // Play the idle animation by default
 		this.owner.animation.play(PlayerAnimations.IDLE);
 	};
@@ -120,7 +127,10 @@ export default class PlayerController implements AI {
 
         // If the player is out of hp - play the death animation
 		if (this.currentHealth <= this.minHealth) { 
-            this.emitter.fireEvent(HW2Events.DEAD);
+			if(this.checkDead == false){
+				this.emitter.fireEvent(HW2Events.DEAD);
+				this.checkDead = true; 
+			}
 			this.owner.animation.play(PlayerAnimations.DEATH);
             return;
         }

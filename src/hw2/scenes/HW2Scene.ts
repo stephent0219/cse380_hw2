@@ -228,7 +228,6 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.DEAD: {
 				this.gameOverTimer.start();
-				this.gameOverTimer.end();
 				break;
 			}
 			case HW2Events.CHARGE_CHANGE: {
