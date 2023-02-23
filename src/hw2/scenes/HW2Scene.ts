@@ -108,14 +108,19 @@ export default class HW2Scene extends Scene {
 	// The padding of the world
 	private worldPadding: Vec2;
 
+	private basiceRecording: BasicRecording;
+
 	/** Scene lifecycle methods */
 
 	/**
 	 * @see Scene.initScene()
 	 */
 	public override initScene(options: Record<string, any>): void {
-		this.seed = options.seed === undefined ? RandUtils.randomSeed() : options.seed;
-        this.recording = options.recording === undefined ? false : options.recording; 
+		this.seed = options.seed !== undefined ? RandUtils.randomSeed() : RandUtils.seed;
+        this.recording = options.recording === undefined ? false : options.recording;
+		
+		this.basiceRecording = new BasicRecording(HW2Scene);
+		RandUtils.seed = this.seed;
 	}
 	/**
 	 * @see Scene.loadScene()
@@ -144,6 +149,9 @@ export default class HW2Scene extends Scene {
 	 * @see Scene.startScene()
 	 */
 	public override startScene(){
+
+		this.emitter.fireEvent(GameEventType.START_RECORDING, {recording: this.basiceRecording});
+
 		this.worldPadding = new Vec2(64, 64);
 
 		// Create a background layer
@@ -228,6 +236,7 @@ export default class HW2Scene extends Scene {
 			}
 			case HW2Events.DEAD: {
 				this.gameOverTimer.start();
+				this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 				break;
 			}
 			case HW2Events.CHARGE_CHANGE: {
