@@ -158,6 +158,9 @@ export default class PlayerController implements AI {
 		// If the player is out of air - start subtracting from the player's health
 		this.currentHealth = this.currentAir <= this.minAir ? MathUtils.clamp(this.currentHealth - deltaT*2, this.minHealth, this.maxHealth) : this.currentHealth;
 		
+		if(this.currentAir <= this.minAir){
+			this.owner.animation.play(PlayerAnimations.HIT);
+		}
 		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
 	}
 	/**
@@ -230,6 +233,9 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerBubbleCollisionEvent(event: GameEvent): void {
+		if(this.currentAir <= this.minAir){
+			this.owner.animation.play(PlayerAnimations.IDLE);
+		}
 		this.currentAir += 1;
 		this.emitter.fireEvent(HW2Events.PLAYER_AIR_CHANGE, {currentAir: this.currentAir, maxAir: this.maxAir});
 	}

@@ -110,6 +110,8 @@ export default class HW2Scene extends Scene {
 
 	private basiceRecording: BasicRecording;
 
+	private playerDeadOrNot: boolean;
+
 	/** Scene lifecycle methods */
 
 	/**
@@ -121,6 +123,8 @@ export default class HW2Scene extends Scene {
 		
 		this.basiceRecording = new BasicRecording(HW2Scene);
 		RandUtils.seed = this.seed;
+
+		this.playerDeadOrNot = false;
 	}
 	/**
 	 * @see Scene.loadScene()
@@ -235,6 +239,7 @@ export default class HW2Scene extends Scene {
 				break;
 			}
 			case HW2Events.DEAD: {
+				this.playerDeadOrNot = true;
 				this.gameOverTimer.start();
 				this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 				break;
@@ -781,7 +786,7 @@ export default class HW2Scene extends Scene {
 	public handleBubblePlayerCollisions(): number {
 		let collisions = 0;
 		for (let bubble of this.bubbles) {
-			if (bubble.visible && HW2Scene.checkAABBtoCircleCollision(this.player.collisionShape.getBoundingRect(), bubble.collisionShape.getBoundingCircle())) {
+			if (this.playerDeadOrNot == false && bubble.visible && HW2Scene.checkAABBtoCircleCollision(this.player.collisionShape.getBoundingRect(), bubble.collisionShape.getBoundingCircle())) {
 				this.emitter.fireEvent(HW2Events.PLAYER_BUBBLE_COLLISION, {id: bubble.id});
 				collisions += 1;
 			}
@@ -809,7 +814,7 @@ export default class HW2Scene extends Scene {
 	public handleMinePlayerCollisions(): number {
 		let collisions = 0;
 		for (let mine of this.mines) {
-			if (mine.visible && this.player.collisionShape.overlaps(mine.collisionShape)) {
+			if (this.playerDeadOrNot == false && mine.visible && this.player.collisionShape.overlaps(mine.collisionShape)) {
 				this.emitter.fireEvent(HW2Events.PLAYER_MINE_COLLISION, {id: mine.id});
 				collisions += 1;
 			}
