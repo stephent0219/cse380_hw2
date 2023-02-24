@@ -45,13 +45,15 @@ float linear_laser(vec4 position);
 // TODO Need to somehow pass in the color from the laser shader type
 void main(){
     gl_FragColor = vec4(laser_Color);
-	gl_FragColor.a = linear_laser(v_Position);
+	gl_FragColor.a = sinwave_laser(v_Position);
 }
 
 
 // TODO Get the laser to look like a sinwave
 float sinwave_laser(vec4 position) {
-	return 1.0;
+	float dist = distance(position.y, MIDLINE);
+	// return smoothstep(position.x - 0.02, position.x, dist) - smoothstep(position.x, position.x + 0.02, dist);
+	return smoothstep(position.x, sin(position.x/dist), dist);
 }
 
 float linear_laser(vec4 position) {
