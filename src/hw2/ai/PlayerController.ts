@@ -64,7 +64,7 @@ export default class PlayerController implements AI {
 		this.emitter = new Emitter();
 
 		this.laserTimer = new Timer(2500, this.handleLaserTimerEnd, false);
-		this.playerGetHitTimer = new Timer(1000, this.handlePlayerGetHitTimerEnd, false);
+		this.playerGetHitTimer = new Timer(2000, this.handlePlayerGetHitTimerEnd, false);
 		this.receiver.subscribe(HW2Events.SHOOT_LASER);
 		this.receiver.subscribe(HW2Events.PLAYER_MINE_COLLISION);
 		this.receiver.subscribe(HW2Events.PLAYER_BUBBLE_COLLISION);
@@ -95,7 +95,7 @@ export default class PlayerController implements AI {
 
 		this.checkDead = false;
 
-		this.playerHitting = false;
+		this.playerHitting = true;
 
         // Play the idle animation by default
 		this.owner.animation.play(PlayerAnimations.IDLE);
@@ -220,10 +220,13 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerMineCollisionEvent(event: GameEvent): void {
-		this.playerGetHitTimer.start();
-		this.owner.animation.play(PlayerAnimations.HIT);
-		this.currentHealth = this.currentHealth-0.3;
-		this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
+		if(this.playerHitting == true){
+			this.playerGetHitTimer.start();
+			this.owner.animation.play(PlayerAnimations.HIT);
+			this.currentHealth = this.currentHealth-2;
+			this.emitter.fireEvent(HW2Events.PLAYER_HEALTH_CHANGE, {currentHealth: this.currentHealth, maxHealth: this.maxHealth});
+		}
+		this.playerHitting = false;
 	}
 
 	protected handlePlayerBubbleCollisionEvent(event: GameEvent): void {
@@ -232,6 +235,7 @@ export default class PlayerController implements AI {
 	}
 
 	protected handlePlayerGetHitTimerEnd = () => {
+		this.playerHitting = true;
 		this.owner.animation.play(PlayerAnimations.IDLE);
 		this.playerGetHitTimer.reset();
 	}
