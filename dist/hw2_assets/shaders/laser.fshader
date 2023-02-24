@@ -51,9 +51,8 @@ void main(){
 
 // TODO Get the laser to look like a sinwave
 float sinwave_laser(vec4 position) {
-	float dist = distance(position.y, MIDLINE);
-	// return smoothstep(position.x - 0.02, position.x, dist) - smoothstep(position.x, position.x + 0.02, dist);
-	return smoothstep(position.x, sin(position.x/dist), dist);
+	float dist = distance(position.y, 0.01*sin(position.x*100.0));
+	return 1.0 - smoothstep(MIN_DISTANCE, MAX_DISTANCE, dist);
 }
 
 float linear_laser(vec4 position) {
