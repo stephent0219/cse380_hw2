@@ -123,7 +123,7 @@ export default class HW2Scene extends Scene {
 		
 		this.basiceRecording = new BasicRecording(HW2Scene);
 		RandUtils.seed = this.seed;
-
+		console.log("Seed: " + this.seed);
 		this.playerDeadOrNot = false;
 	}
 	/**
@@ -241,7 +241,6 @@ export default class HW2Scene extends Scene {
 			case HW2Events.DEAD: {
 				this.playerDeadOrNot = true;
 				this.gameOverTimer.start();
-				this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 				break;
 			}
 			case HW2Events.CHARGE_CHANGE: {
@@ -979,6 +978,7 @@ export default class HW2Scene extends Scene {
 		}
 		// If the game-over timer has run, change to the game-over scene
 		if (this.gameOverTimer.hasRun() && this.gameOverTimer.isStopped()) {
+			this.emitter.fireEvent(GameEventType.STOP_RECORDING);
 		 	this.sceneManager.changeToScene(GameOver, {
 				bubblesPopped: this.bubblesPopped, 
 				minesDestroyed: this.minesDestroyed,
